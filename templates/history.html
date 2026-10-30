@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLE/AI - History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="home-page">
+
+    <header class="navbar">
+        <div class="logo">SOLE/<span>AI</span></div>
+        <nav class="nav-links">
+            <a href="/">HOME</a>
+            <a href="/studio">STUDIO</a>
+            <a href="/history" class="active">HISTORY</a>
+        </nav>
+        <div class="nav-action">
+            <a href="/studio" class="btn-yellow">DESIGN NOW →</a>
+        </div>
+    </header>
+
+    <div class="studio-container">
+        <h2>Your Design History</h2>
+        <div class="studio-panel">
+            {% for design in designs %}
+                <div class="history-card">{{ design }}</div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No designs saved in history yet. Head over to the Studio to create your first pair!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

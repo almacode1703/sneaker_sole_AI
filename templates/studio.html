@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLE/AI - Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        window.hcaptchaReady = function () {
+            window.dispatchEvent(new Event('hcaptcha-ready'));
+        };
+    </script>
+    <script src="https://js.hcaptcha.com/1/api.js?render=explicit&onload=hcaptchaReady" async defer></script>
+</head>
+<body class="home-page" data-hcaptcha-site-key="{{ hcaptcha_site_key }}">
+
+    <header class="navbar">
+        <div class="logo">SOLE/<span>AI</span></div>
+        <nav class="nav-links">
+            <a href="/">HOME</a>
+            <a href="/studio" class="active">STUDIO</a>
+            <a href="/history">HISTORY</a>
+        </nav>
+        <div class="nav-action">
+            <a href="/studio" class="btn-yellow">DESIGN NOW →</a>
+        </div>
+    </header>
+
+    <div class="studio-container">
+        <!-- Form Panel -->
+        <div class="studio-panel">
+            <h2>DESIGN BRIEF</h2>
+            <p style="color: #777; font-size: 0.85rem; margin-bottom: 20px;">Tell the AI what you're envisioning.</p>
+            
+            <div class="input-group">
+                <label>SILHOUETTE STYLE</label>
+                <div class="chip-group" data-field="style">
+                    <input type="hidden" id="style" value="Casual">
+                    <span class="chip active" data-value="Casual">Casual</span>
+                    <span class="chip" data-value="Athletic">Athletic</span>
+                    <span class="chip" data-value="Luxury">Luxury</span>
+                    <span class="chip" data-value="Retro">Retro</span>
+                    <span class="chip" data-value="Futuristic">Futuristic</span>
+                    <span class="chip" data-value="Streetwear">Streetwear</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>PRIMARY MATERIAL</label>
+                <div class="chip-group" data-field="material">
+                    <input type="hidden" id="material" value="Leather">
+                    <span class="chip active" data-value="Leather">Leather</span>
+                    <span class="chip" data-value="Canvas">Canvas</span>
+                    <span class="chip" data-value="Mesh">Mesh</span>
+                    <span class="chip" data-value="Suede">Suede</span>
+                    <span class="chip" data-value="Knit">Knit</span>
+                    <span class="chip" data-value="Recycled">Recycled</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>OCCASION</label>
+                <div class="chip-group" data-field="occasion">
+                    <input type="hidden" id="occasion" value="Everyday">
+                    <span class="chip active" data-value="Everyday">Everyday</span>
+                    <span class="chip" data-value="Running">Running</span>
+                    <span class="chip" data-value="Basketball">Basketball</span>
+                    <span class="chip" data-value="Hiking">Hiking</span>
+                    <span class="chip" data-value="Formal">Formal</span>
+                    <span class="chip" data-value="Limited Ed.">Limited Ed.</span>
+                </div>
+            </div>
+
+            <div class="color-row">
+                <div class="input-group" style="flex: 1;">
+                    <label>PRIMARY COLOR</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="primary_color" value="#7a7af0">
+                        <input type="text" id="primary_color_text" value="#7a7af0">
+                    </div>
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>ACCENT COLOR</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="accent_color" value="#32c81e">
+                        <input type="text" id="accent_color_text" value="#32c81e">
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>INSPIRATION / THEME</label>
+                <textarea id="inspiration" placeholder="e.g. Tokyo neon nights, vintage basketball, deep ocean, brutalist architecture..."></textarea>
+            </div>
+
+            <button id="generateBtn" class="btn-yellow full-width">GENERATE CONCEPT ⚡</button>
+            <div id="formError" class="error-msg"></div>
+        </div>
+
+        <!-- Result / Preview Panel -->
+        <div class="studio-panel">
+            <div id="emptyState" class="empty-state">
+                <p>Configure your preferences and click generate to build your custom sneaker.</p>
+            </div>
+
+            <div id="loadingState" class="loading-state hidden">
+                <p>⚡ AI is designing your sneaker concept...</p>
+            </div>
+
+            <div id="result" class="hidden result-box">
+                <h3 id="resultName"></h3>
+                <p class="tagline" id="resultTagline"></p>
+                <img id="conceptImage" class="concept-image" alt="AI-generated sneaker concept render">
+                <p id="resultDesc" style="color: #ccc; line-height: 1.5; font-size: 0.9rem;"></p>
+                
+                <div class="results-grid">
+                    <div class="results-column">
+                        <h4>MATERIALS</h4>
+                        <ul id="materialsList"></ul>
+                    </div>
+                    <div class="results-column">
+                        <h4>KEY FEATURES</h4>
+                        <ul id="featuresList"></ul>
+                    </div>
+                    <div class="results-column">
+                        <h4>SOLE SYSTEM</h4>
+                        <p id="soleText" style="color: #ccc; font-size: 0.9rem; margin-top: 5px;"></p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px;">
+                    <div>
+                        <span id="resultPrice" class="badge" style="font-size: 1rem; margin-right: 15px;"></span>
+                        <span id="resultAudience" style="color: #888; font-size: 0.85rem;"></span>
+                    </div>
+                    <div>
+                        <span id="resultTags" style="color: #666; font-size: 0.75rem;"></span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 15px;">
+                    <button id="regenBtn" class="btn-yellow">NEW CONCEPT ↺</button>
+                    <a href="/history" class="btn-dark-outline">VIEW HISTORY →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- hCaptcha Modal Overlay -->
+    <div id="captchaModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+        <div style="background: #141419; border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 8px; text-align: center;">
+            <h3 style="color: #fff; margin-bottom: 15px;">Security Verification</h3>
+            <div id="hcaptchaWidget"></div>
+            <button id="cancelCaptcha" class="btn-dark-outline" style="margin-top: 15px;">Cancel</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/studio.js') }}"></script>
+</body>
+</html>
